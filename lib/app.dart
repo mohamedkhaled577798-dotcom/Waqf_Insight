@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:waqf_insight/config/routes/app_router.dart';
+import 'package:waqf_insight/core/di/injection_container.dart';
 import 'package:waqf_insight/core/theme/app_theme.dart';
+import 'package:waqf_insight/features/auth/presentation/bloc/auth_bloc.dart';
 
 /// Root widget of the application.
 ///
@@ -11,18 +14,21 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Waqf Insight',
-      debugShowCheckedModeBanner: false,
+    return BlocProvider<AuthBloc>(
+      create: (context) => sl<AuthBloc>(),
+      child: MaterialApp(
+        title: 'Waqf Insight',
+        debugShowCheckedModeBanner: false,
 
-      // Theme
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+        // Theme
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
 
-      // Routing
-      initialRoute: AppRouter.home,
-      onGenerateRoute: AppRouter.onGenerateRoute,
+        // Routing
+        initialRoute: AppRouter.splash,
+        onGenerateRoute: AppRouter.onGenerateRoute,
+      ),
     );
   }
 }

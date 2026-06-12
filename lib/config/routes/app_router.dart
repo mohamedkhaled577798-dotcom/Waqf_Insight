@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:waqf_insight/features/auth/presentation/pages/auth_page.dart';
+import 'package:waqf_insight/features/splash/presentation/pages/splash_page.dart';
 
 /// Centralized route management using named routes.
 ///
@@ -10,6 +12,7 @@ class AppRouter {
 
   // ── Route Names ───────────────────────────────────────────
   static const String splash = '/';
+  static const String auth = '/auth';
   static const String home = '/home';
   static const String waqfDetails = '/waqf-details';
 
@@ -18,22 +21,25 @@ class AppRouter {
     switch (settings.name) {
       case splash:
         return _buildRoute(
-          const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          ),
+          const SplashPage(),
+          settings,
+        );
+
+      case auth:
+        return _buildRoute(
+          const AuthPage(),
           settings,
         );
 
       case home:
         return _buildRoute(
           const Scaffold(
-            body: Center(child: Text('Home')),
+            body: Center(child: Text('الصفحة الرئيسية')),
           ),
           settings,
         );
 
       case waqfDetails:
-        // final args = settings.arguments as WaqfDetailsArgs;
         return _buildRoute(
           const Scaffold(
             body: Center(child: Text('Waqf Details')),
