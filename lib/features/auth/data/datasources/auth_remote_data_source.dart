@@ -1,66 +1,105 @@
+import 'package:waqf_insight/core/constants/app_constants.dart';
 import 'package:waqf_insight/core/errors/exceptions.dart';
 import 'package:waqf_insight/core/network/api_client.dart';
+import 'package:waqf_insight/features/auth/data/models/auth_session_model.dart';
 import 'package:waqf_insight/features/auth/data/models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<UserModel> login({
+  Future<AuthSessionModel> login({
     required String email,
     required String password,
   });
 
-  Future<UserModel> register({
-    required String name,
-    required String email,
-    required String password,
+  Future<RefreshTokenModel> refreshToken();
+
+  Future<UserModel> getProfile();
+
+  Future<void> logout();
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
   });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final ApiClient apiClient;
-
   AuthRemoteDataSourceImpl({required this.apiClient});
 
+  final ApiClient apiClient;
+
   @override
-  Future<UserModel> login({
+  Future<AuthSessionModel> login({
     required String email,
     required String password,
   }) async {
     try {
-      // Mocking or hitting API. Let's provide a mock implementation for demonstration.
-      await Future.delayed(const Duration(seconds: 1));
-      
-      if (email == "demo@waqf.gov.iq" && password == "123456") {
-        return const UserModel(
-          id: "1",
-          email: "demo@waqf.gov.iq",
-          name: "أحمد محمد",
-          token: "mock_jwt_token",
-        );
-      } else {
-        throw const ServerException(message: "البريد الإلكتروني أو كلمة المرور غير صحيحة");
+      final response = await apiClient.post(
+        AppConstants.loginPath,
+        data: {
+          'email': email,
+          'password': password,
+        },
+      );
+
+      final data = response.data;
+      if (data is! Map<String, dynamic>) {
+        throw const ServerException(message: 'استجابة غير متوقعة من الخادم');
       }
+
+      return AuthSessionModel.fromLoginJson(data);
+    } on UnauthorizedException {
+      throw const ServerException(
+        message:
+            'بيانات الدخول غير صحيحة، أو الحساب ليس له دور رئيس الهيئة',
+        statusCode: 401,
+      );
+    } on ServerException {
+      rethrow;
     } catch (e) {
-      if (e is ServerException) rethrow;
       throw ServerException(message: e.toString());
     }
   }
 
   @override
-  Future<UserModel> register({
-    required String name,
-    required String email,
-    required String password,
-  }) async {
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      return UserModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        email: email,
-        name: name,
-        token: "mock_jwt_token",
-      );
-    } catch (e) {
-      throw ServerException(message: e.toString());
+  Future<RefreshTokenModel> refreshToken() async {
+    final response = await apiClient.post(AppConstants.refreshTokenPath);
+    final data = response.data;
+
+    if (data is! Map<String, dynamic>) {
+      throw const ServerException(message: 'استجابة غير متوقعة من الخادم');
     }
+
+    return RefreshTokenModel.fromJson(data);
+  }
+
+  @override
+  Future<UserModel> getProfile() async {
+    final response = await apiClient.get(AppConstants.profilePath);
+    final data = response.data;
+
+    if (data is! Map<String, dynamic>) {
+      throw const ServerException(message: 'استجابة غير متوقعة من الخادم');
+    }
+
+    return UserModel.fromProfileJson(data);
+  }
+
+  @override
+  Future<void> logout() async {
+    await apiClient.post(AppConstants.logoutPath);
+  }
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    await apiClient.post(
+      AppConstants.changePasswordPath,
+      data: {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      },
+    );
   }
 }

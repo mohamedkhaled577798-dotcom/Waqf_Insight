@@ -288,10 +288,7 @@ class _LoginCard extends StatelessWidget {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'يرجى إدخال البريد الإلكتروني';
-                }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                    .hasMatch(value)) {
-                  return 'يرجى إدخال بريد إلكتروني صالح';
+
                 }
                 return null;
               },
