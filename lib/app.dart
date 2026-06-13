@@ -23,7 +23,7 @@ class App extends StatelessWidget {
         // Theme
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
+        themeMode: ThemeMode.light,
 
         // Routing
         initialRoute: AppRouter.splash,

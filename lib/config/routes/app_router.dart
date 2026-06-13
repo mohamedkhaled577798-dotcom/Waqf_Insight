@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:waqf_insight/features/auth/presentation/pages/auth_page.dart';
+import 'package:waqf_insight/features/auth/presentation/pages/login_page.dart';
 import 'package:waqf_insight/features/splash/presentation/pages/splash_page.dart';
 
 /// Centralized route management using named routes.
@@ -27,7 +27,7 @@ class AppRouter {
 
       case auth:
         return _buildRoute(
-          const AuthPage(),
+          const LoginPage(),
           settings,
         );
 

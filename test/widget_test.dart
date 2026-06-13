@@ -13,10 +13,12 @@ void main() {
   });
 
   testWidgets('App splash screen smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
     await tester.pumpWidget(const App());
 
-    // Verify that the title of the divan is displayed.
     expect(find.text('ديوان الوقف السني العراقي'), findsOneWidget);
+    expect(find.text('هيئة إدارة واستثمار أموال الوقف السني'), findsOneWidget);
+
+    // Advance past splash minimum duration so pending timers complete.
+    await tester.pump(const Duration(seconds: 5));
   });
 }
