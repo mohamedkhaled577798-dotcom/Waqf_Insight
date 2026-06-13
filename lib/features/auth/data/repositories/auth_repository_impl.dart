@@ -4,6 +4,7 @@ import 'package:waqf_insight/core/errors/failures.dart';
 import 'package:waqf_insight/core/network/network_info.dart';
 import 'package:waqf_insight/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:waqf_insight/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:waqf_insight/features/auth/data/models/user_model.dart';
 import 'package:waqf_insight/features/auth/domain/entities/user_entity.dart';
 import 'package:waqf_insight/features/auth/domain/repositories/auth_repository.dart';
 
@@ -61,65 +62,83 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, UserEntity>> getCurrentUser() async {
     try {
-      final token = await localDataSource.getToken();
-      if (token == null) {
+      if (!await localDataSource.hasSession()) {
         return const Left(CacheFailure(message: 'لا توجد جلسة نشطة'));
       }
 
-      var expiration = await localDataSource.getTokenExpiration();
-      final now = DateTime.now();
+      await localDataSource.syncTokenHolder();
 
-      if (expiration != null && !expiration.isAfter(now)) {
-        if (!await networkInfo.isConnected) {
-          await localDataSource.clearCache();
-          return const Left(CacheFailure(message: 'انتهت صلاحية الجلسة'));
-        }
-
-        try {
-          final refreshed = await remoteDataSource.refreshToken();
-          await localDataSource.updateToken(
-            token: refreshed.token,
-            expiration: refreshed.expiration,
-          );
-          expiration = refreshed.expiration;
-        } on UnauthorizedException {
-          await localDataSource.clearCache();
-          return const Left(UnauthorizedFailure(message: 'انتهت صلاحية الجلسة'));
-        } on ServerException {
-          await localDataSource.clearCache();
-          return const Left(CacheFailure(message: 'لا توجد جلسة نشطة'));
-        }
+      UserModel user;
+      try {
+        user = await localDataSource.getLastUser();
+      } on CacheException {
+        return const Left(CacheFailure(message: 'لا توجد جلسة نشطة'));
       }
+
+      // Restore cached session first — only clear on explicit 401.
+      user = await _refreshSessionIfNeeded(user);
 
       if (await networkInfo.isConnected) {
-        try {
-          final profile = await remoteDataSource.getProfile();
-          final cached = await localDataSource.getLastUser();
-          final merged = profile.copyWith(
-            token: cached.token,
-            tokenExpiration: expiration ?? cached.tokenExpiration,
-          );
-
-          if (merged.token != null && merged.tokenExpiration != null) {
-            await localDataSource.cacheSession(
-              user: merged,
-              token: merged.token!,
-              expiration: merged.tokenExpiration!,
-            );
-          }
-
-          return Right(merged);
-        } on UnauthorizedException {
-          await localDataSource.clearCache();
-          return const Left(UnauthorizedFailure(message: 'انتهت صلاحية الجلسة'));
-        } on ServerException {
-          // Use cached profile when profile endpoint is temporarily unavailable.
-        }
+        user = await _tryRefreshProfile(user);
       }
 
-      return Right(await localDataSource.getLastUser());
+      return Right(user);
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
+    }
+  }
+
+  Future<UserModel> _refreshSessionIfNeeded(UserModel user) async {
+    final expiration = user.tokenExpiration;
+    final isExpired = expiration != null &&
+        !expiration.isAfter(DateTime.now().add(const Duration(minutes: 1)));
+
+    if (!isExpired || !await networkInfo.isConnected) {
+      return user;
+    }
+
+    try {
+      final refreshed = await remoteDataSource.refreshToken();
+      await localDataSource.updateToken(
+        token: refreshed.token,
+        expiration: refreshed.expiration,
+      );
+      return user.copyWith(
+        token: refreshed.token,
+        tokenExpiration: refreshed.expiration,
+      );
+    } on UnauthorizedException {
+      await localDataSource.clearCache();
+      throw const CacheException(message: 'انتهت صلاحية الجلسة');
+    } catch (_) {
+      // Keep saved session when refresh fails (network/server down).
+      return user;
+    }
+  }
+
+  Future<UserModel> _tryRefreshProfile(UserModel user) async {
+    try {
+      final profile = await remoteDataSource.getProfile();
+      final token = await localDataSource.getToken();
+      final expiration = await localDataSource.getTokenExpiration();
+
+      if (token != null && expiration != null) {
+        await localDataSource.cacheSession(
+          user: profile,
+          token: token,
+          expiration: expiration,
+        );
+      }
+
+      return profile.copyWith(
+        token: token ?? user.token,
+        tokenExpiration: expiration ?? user.tokenExpiration,
+      );
+    } on UnauthorizedException {
+      await localDataSource.clearCache();
+      throw const CacheException(message: 'انتهت صلاحية الجلسة');
+    } catch (_) {
+      return user;
     }
   }
 

@@ -1,49 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:waqf_insight/features/auth/presentation/pages/login_page.dart';
+import 'package:waqf_insight/features/home/presentation/pages/main_shell_page.dart';
 import 'package:waqf_insight/features/splash/presentation/pages/splash_page.dart';
 
 /// Centralized route management using named routes.
-///
-/// All route names are defined as constants to avoid typos.
-/// The [onGenerateRoute] callback handles navigation and
-/// passes arguments to destination pages.
 class AppRouter {
   AppRouter._();
 
-  // ── Route Names ───────────────────────────────────────────
   static const String splash = '/';
   static const String auth = '/auth';
   static const String home = '/home';
   static const String waqfDetails = '/waqf-details';
 
-  // ── Route Generator ───────────────────────────────────────
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
-        return _buildRoute(
-          const SplashPage(),
-          settings,
-        );
+        return _buildRoute(const SplashPage(), settings);
 
       case auth:
-        return _buildRoute(
-          const LoginPage(),
-          settings,
-        );
+        return _buildRoute(const LoginPage(), settings);
 
       case home:
-        return _buildRoute(
-          const Scaffold(
-            body: Center(child: Text('الصفحة الرئيسية')),
-          ),
-          settings,
-        );
+        return _buildRoute(const MainShellPage(), settings);
 
       case waqfDetails:
         return _buildRoute(
-          const Scaffold(
-            body: Center(child: Text('Waqf Details')),
-          ),
+          const Scaffold(body: Center(child: Text('Waqf Details'))),
           settings,
         );
 
@@ -59,7 +41,6 @@ class AppRouter {
     }
   }
 
-  /// Creates a [MaterialPageRoute] with a smooth slide transition.
   static MaterialPageRoute<dynamic> _buildRoute(
     Widget page,
     RouteSettings settings,

@@ -5,6 +5,7 @@ import 'package:waqf_insight/core/network/auth_token_holder.dart';
 import 'package:waqf_insight/core/network/network_info.dart';
 import 'package:waqf_insight/core/storage/key_value_storage.dart';
 import 'package:waqf_insight/core/storage/key_value_storage_factory.dart';
+import 'package:waqf_insight/core/theme/theme_cubit.dart';
 
 import 'package:waqf_insight/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:waqf_insight/features/auth/data/datasources/auth_remote_data_source.dart';
@@ -36,6 +37,7 @@ Future<void> initDependencies() async {
   // ── Core ────────────────────────────────────────────────
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton<ApiClient>(() => ApiClient(tokenHolder: sl()));
+  sl.registerLazySingleton(() => ThemeCubit(sl()));
 
   // ── Features ────────────────────────────────────────────
   _initAuthFeature();

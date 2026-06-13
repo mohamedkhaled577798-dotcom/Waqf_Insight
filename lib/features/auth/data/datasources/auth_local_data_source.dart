@@ -20,6 +20,8 @@ abstract class AuthLocalDataSource {
     required DateTime expiration,
   });
   Future<void> clearCache();
+  Future<void> syncTokenHolder();
+  Future<bool> hasSession();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
@@ -117,5 +119,17 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     await _storage.delete(AppConstants.tokenKey);
     await _storage.delete(AppConstants.tokenExpirationKey);
     _tokenHolder.clear();
+  }
+
+  @override
+  Future<void> syncTokenHolder() async {
+    final token = await _storage.read(AppConstants.tokenKey);
+    _tokenHolder.setToken(token);
+  }
+
+  @override
+  Future<bool> hasSession() async {
+    final token = await _storage.read(AppConstants.tokenKey);
+    return token != null && token.isNotEmpty;
   }
 }
