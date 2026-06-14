@@ -437,16 +437,6 @@ class _HomeHeroBanner extends StatelessWidget {
                           height: 1.3,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        OrgBranding.authoritySubtitle,
-                        style: GoogleFonts.cairo(
-                          color: SplashColors.goldLight,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          height: 1.45,
-                        ),
-                      ),
                       const SizedBox(height: 12),
                       Container(
                         padding: const EdgeInsets.symmetric(

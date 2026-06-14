@@ -11,6 +11,7 @@ import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_sect
 import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_section_state.dart';
 import 'package:waqf_insight/features/dashboard/presentation/widgets/dashboard_charts.dart';
 import 'package:waqf_insight/features/dashboard/presentation/widgets/distribution_list_widget.dart';
+import 'package:waqf_insight/features/dashboard/presentation/widgets/modules_section_body.dart';
 import 'package:waqf_insight/features/dashboard/presentation/widgets/responsive_dashboard_widgets.dart';
 import 'package:waqf_insight/features/filters/domain/entities/geo_selection.dart';
 import 'package:waqf_insight/features/filters/presentation/bloc/filters_bloc.dart';
@@ -160,7 +161,7 @@ class _SectionBody extends StatelessWidget {
       DashboardSectionType.investors => _InvestorsBody(data as InvestorStatsModel),
       DashboardSectionType.partners => _PartnersBody(data as PartnerStatsModel),
       DashboardSectionType.mutawallis => _MutawallisBody(data as MutawalliStatsModel),
-      DashboardSectionType.modules => _ModulesBody(data as ModuleStatsModel),
+      DashboardSectionType.modules => ModulesSectionBody(stats: data as ModuleStatsModel),
       DashboardSectionType.staff => _StaffBody(data as StaffOverviewModel),
     };
   }
@@ -464,30 +465,6 @@ class _MutawallisBody extends StatelessWidget {
             ),
           ),
         ),
-      ],
-    );
-  }
-}
-
-class _ModulesBody extends StatelessWidget {
-  const _ModulesBody(this.stats);
-  final ModuleStatsModel stats;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        StatTile(label: 'قضايا نشطة', value: '${stats.activeCases}'),
-        const SizedBox(height: 10),
-        StatTile(label: 'جلسات قادمة', value: '${stats.upcomingSessions}'),
-        const SizedBox(height: 10),
-        StatTile(label: 'مشاريع نشطة', value: '${stats.activeProjects}'),
-        const SizedBox(height: 10),
-        StatTile(label: 'صيانة معلّقة', value: '${stats.pendingMaintenanceRequests}'),
-        const SizedBox(height: 10),
-        StatTile(label: 'تفتيش معلّق', value: '${stats.pendingInspectionTasks}'),
-        const SizedBox(height: 10),
-        StatTile(label: 'موافقات معلّقة', value: '${stats.pendingApprovals}'),
       ],
     );
   }
