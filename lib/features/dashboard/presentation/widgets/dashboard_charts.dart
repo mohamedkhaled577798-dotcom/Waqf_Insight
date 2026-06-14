@@ -20,9 +20,11 @@ class ChartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final width = MediaQuery.sizeOf(context).width;
+    final padding = width < 360 ? 14.0 : 18.0;
 
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
@@ -81,8 +83,12 @@ class MetricHighlightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final valueSize = width < 360 ? 16.0 : width < 420 ? 18.0 : 20.0;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(width < 360 ? 12 : 14),
+      constraints: const BoxConstraints(minHeight: 96),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [color, color.withValues(alpha: 0.72)],
@@ -100,30 +106,46 @@ class MetricHighlightCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white.withValues(alpha: 0.9), size: 26),
-          const Spacer(),
-          Text(
-            value,
-            style: GoogleFonts.cairo(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
+          Icon(
+            icon,
+            color: Colors.white.withValues(alpha: 0.9),
+            size: width < 360 ? 22 : 24,
+          ),
+          const SizedBox(height: 10),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: GoogleFonts.cairo(
+                color: Colors.white,
+                fontSize: valueSize,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
           if (subtitle != null)
             Text(
               subtitle!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.cairo(
                 color: Colors.white.withValues(alpha: 0.85),
-                fontSize: 11,
+                fontSize: 10,
               ),
             ),
+          const SizedBox(height: 2),
           Text(
             label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.cairo(
               color: Colors.white.withValues(alpha: 0.9),
-              fontSize: 12,
+              fontSize: width < 360 ? 11 : 12,
+              height: 1.2,
             ),
           ),
         ],
@@ -150,12 +172,17 @@ class GpsGaugeChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final clamped = percent.clamp(0.0, 100.0);
+    final width = MediaQuery.sizeOf(context).width;
+    final chartHeight = width < 360 ? 150.0 : width < 420 ? 165.0 : 180.0;
+    final centerRadius = width < 360 ? 46.0 : width < 420 ? 52.0 : 58.0;
+    final sectionRadius = width < 360 ? 18.0 : 22.0;
+    final percentSize = width < 360 ? 22.0 : 26.0;
 
     return ChartCard(
       title: title,
       subtitle: subtitle,
       child: SizedBox(
-        height: 180,
+        height: chartHeight,
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -163,18 +190,18 @@ class GpsGaugeChart extends StatelessWidget {
               PieChartData(
                 startDegreeOffset: -90,
                 sectionsSpace: 0,
-                centerSpaceRadius: 58,
+                centerSpaceRadius: centerRadius,
                 sections: [
                   PieChartSectionData(
                     value: clamped,
                     color: colorScheme.primary,
-                    radius: 22,
+                    radius: sectionRadius,
                     showTitle: false,
                   ),
                   PieChartSectionData(
                     value: 100 - clamped,
                     color: colorScheme.surfaceContainerHighest,
-                    radius: 22,
+                    radius: sectionRadius,
                     showTitle: false,
                   ),
                 ],
@@ -183,18 +210,21 @@ class GpsGaugeChart extends StatelessWidget {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  formatPercent(clamped),
-                  style: GoogleFonts.cairo(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w800,
-                    color: colorScheme.primary,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    formatPercent(clamped),
+                    style: GoogleFonts.cairo(
+                      fontSize: percentSize,
+                      fontWeight: FontWeight.w800,
+                      color: colorScheme.primary,
+                    ),
                   ),
                 ),
                 Text(
                   centerLabel,
                   style: GoogleFonts.cairo(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
@@ -223,6 +253,10 @@ class DistributionPieChart extends StatelessWidget {
 
     final total = slices.fold<int>(0, (s, e) => s + e.value);
     final top = slices.take(6).toList();
+    final width = MediaQuery.sizeOf(context).width;
+    final chartHeight = width < 360 ? 160.0 : 190.0;
+    final sectionRadius = width < 360 ? 42.0 : 52.0;
+    final centerRadius = width < 360 ? 28.0 : 36.0;
 
     return ChartCard(
       title: title,
@@ -230,23 +264,23 @@ class DistributionPieChart extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            height: 190,
+            height: chartHeight,
             child: PieChart(
               PieChartData(
                 sectionsSpace: 2,
-                centerSpaceRadius: 36,
+                centerSpaceRadius: centerRadius,
                 sections: [
                   for (var i = 0; i < top.length; i++)
                     PieChartSectionData(
                       value: top[i].value.toDouble(),
                       title: '${top[i].effectivePercent(total).toStringAsFixed(0)}%',
                       titleStyle: GoogleFonts.cairo(
-                        fontSize: 11,
+                        fontSize: width < 360 ? 9 : 11,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
                       color: ChartColors.at(i),
-                      radius: 52,
+                      radius: sectionRadius,
                     ),
                 ],
               ),
@@ -290,55 +324,124 @@ class DistributionBarChart extends StatelessWidget {
 
     return ChartCard(
       title: title,
-      child: SizedBox(
-        height: 36.0 * top.length + 24,
-        child: BarChart(
-          BarChartData(
-            alignment: BarChartAlignment.spaceAround,
-            maxY: maxVal <= 0 ? 1 : maxVal * 1.15,
-            gridData: const FlGridData(show: false),
-            borderData: FlBorderData(show: false),
-            titlesData: FlTitlesData(
-              leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    final index = value.toInt();
-                    if (index < 0 || index >= top.length) return const SizedBox.shrink();
-                    final label = top[index].label;
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Text(
-                        label.length > 10 ? '${label.substring(0, 10)}…' : label,
-                        style: GoogleFonts.cairo(fontSize: 10),
-                      ),
-                    );
-                  },
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 400) {
+            return _HorizontalBarList(slices: top, maxVal: maxVal);
+          }
+
+          return SizedBox(
+            height: 36.0 * top.length + 24,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: maxVal <= 0 ? 1 : maxVal * 1.15,
+                gridData: const FlGridData(show: false),
+                borderData: FlBorderData(show: false),
+                titlesData: FlTitlesData(
+                  leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index < 0 || index >= top.length) {
+                          return const SizedBox.shrink();
+                        }
+                        final label = top[index].label;
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(
+                            label.length > 10 ? '${label.substring(0, 10)}…' : label,
+                            style: GoogleFonts.cairo(fontSize: 10),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
+                barGroups: [
+                  for (var i = 0; i < top.length; i++)
+                    BarChartGroupData(
+                      x: i,
+                      barRods: [
+                        BarChartRodData(
+                          toY: top[i].value.toDouble(),
+                          color: ChartColors.at(i),
+                          width: 18,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(6),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
               ),
             ),
-            barGroups: [
-              for (var i = 0; i < top.length; i++)
-                BarChartGroupData(
-                  x: i,
-                  barRods: [
-                    BarChartRodData(
-                      toY: top[i].value.toDouble(),
-                      color: ChartColors.at(i),
-                      width: 18,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(6),
-                      ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _HorizontalBarList extends StatelessWidget {
+  const _HorizontalBarList({
+    required this.slices,
+    required this.maxVal,
+  });
+
+  final List<DistributionSliceModel> slices;
+  final int maxVal;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        for (var i = 0; i < slices.length; i++) ...[
+          if (i > 0) const SizedBox(height: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      slices[i].label,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.cairo(fontSize: 12),
                     ),
-                  ],
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${slices[i].value}',
+                    style: GoogleFonts.cairo(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: ChartColors.at(i),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: maxVal <= 0 ? 0 : slices[i].value / maxVal,
+                  minHeight: 10,
+                  backgroundColor: colorScheme.surfaceContainerHighest,
+                  color: ChartColors.at(i),
                 ),
+              ),
             ],
           ),
-        ),
-      ),
+        ],
+      ],
     );
   }
 }

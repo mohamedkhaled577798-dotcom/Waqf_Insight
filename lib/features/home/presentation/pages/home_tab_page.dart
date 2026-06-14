@@ -36,8 +36,6 @@ class _HomeTabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return BlocListener<FiltersBloc, FiltersState>(
       listener: (context, state) {
         if (state is FiltersLoaded) {
@@ -47,12 +45,17 @@ class _HomeTabContent extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'ديوان الوقف السني',
+            'الرئيسية',
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
           ),
           actions: [
             IconButton(
-              tooltip: 'التوزيع الجغرافي',
+              tooltip: 'الفلتر الجغرافي',
+              icon: const Icon(Icons.tune_rounded),
+              onPressed: () => showGeoFilterSheet(context),
+            ),
+            IconButton(
+              tooltip: 'الخريطة',
               icon: const Icon(Icons.map_rounded),
               onPressed: () {
                 final filters = context.read<FiltersBloc>().state;
@@ -79,58 +82,12 @@ class _HomeTabContent extends StatelessWidget {
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const GeoFilterBar(),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        colorScheme.primary,
-                        colorScheme.primary.withValues(alpha: 0.75),
-                      ],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'مرحباً بك',
-                        style: GoogleFonts.cairo(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'هيئة إدارة واستثمار\nأموال الوقف السني',
-                        style: GoogleFonts.cairo(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'نظرة سريعة',
-                  style: GoogleFonts.cairo(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 const DashboardKpiSection(),
               ],
             ),

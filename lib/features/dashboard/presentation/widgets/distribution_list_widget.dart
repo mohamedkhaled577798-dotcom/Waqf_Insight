@@ -91,18 +91,21 @@ class StatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final width = MediaQuery.sizeOf(context).width;
+    final valueSize = width < 360 ? 15.0 : 17.0;
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(width < 360 ? 12 : 14),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            Icon(icon, color: colorScheme.primary, size: 22),
-            const SizedBox(width: 12),
+            Icon(icon, color: colorScheme.primary, size: width < 360 ? 20 : 22),
+            const SizedBox(width: 10),
           ],
           Expanded(
             child: Column(
@@ -110,16 +113,22 @@ class StatTile extends StatelessWidget {
               children: [
                 Text(
                   value,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.cairo(
-                    fontSize: 18,
+                    fontSize: valueSize,
                     fontWeight: FontWeight.w800,
+                    height: 1.25,
                   ),
                 ),
                 Text(
                   label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.cairo(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: colorScheme.onSurface.withValues(alpha: 0.65),
+                    height: 1.2,
                   ),
                 ),
               ],

@@ -11,6 +11,7 @@ import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_sect
 import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_section_state.dart';
 import 'package:waqf_insight/features/dashboard/presentation/widgets/dashboard_charts.dart';
 import 'package:waqf_insight/features/dashboard/presentation/widgets/distribution_list_widget.dart';
+import 'package:waqf_insight/features/dashboard/presentation/widgets/responsive_dashboard_widgets.dart';
 import 'package:waqf_insight/features/filters/domain/entities/geo_selection.dart';
 import 'package:waqf_insight/features/filters/presentation/bloc/filters_bloc.dart';
 import 'package:waqf_insight/features/filters/presentation/bloc/filters_state.dart';
@@ -111,7 +112,12 @@ class _DashboardSectionView extends StatelessWidget {
                 );
               },
               child: ListView(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.fromLTRB(
+                  MediaQuery.sizeOf(context).width < 360 ? 14 : 16,
+                  12,
+                  MediaQuery.sizeOf(context).width < 360 ? 14 : 16,
+                  24,
+                ),
                 children: [
                   const GeoFilterBar(),
                   const SizedBox(height: 16),
@@ -171,30 +177,22 @@ class _PropertiesBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          height: 120,
-          child: Row(
-            children: [
-              Expanded(
-                child: MetricHighlightCard(
-                  label: 'إجمالي الأملاك',
-                  value: '${stats.totalProperties}',
-                  icon: Icons.domain_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: MetricHighlightCard(
-                  label: 'القيمة التقديرية',
-                  value: formatIraqiCurrency(stats.totalEstimatedValue),
-                  subtitle: 'د.ع',
-                  icon: Icons.payments_rounded,
-                  color: const Color(0xFFD5A069),
-                ),
-              ),
-            ],
-          ),
+        ResponsiveMetricRow(
+          children: [
+            MetricHighlightCard(
+              label: 'إجمالي الأملاك',
+              value: '${stats.totalProperties}',
+              icon: Icons.domain_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            MetricHighlightCard(
+              label: 'القيمة التقديرية',
+              value: formatIraqiCurrency(stats.totalEstimatedValue),
+              subtitle: 'د.ع',
+              icon: Icons.payments_rounded,
+              color: const Color(0xFFD5A069),
+            ),
+          ],
         ),
         const SizedBox(height: 16),
         GpsGaugeChart(percent: stats.gpsCoveragePercent),
@@ -234,30 +232,22 @@ class _ContractsBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          height: 120,
-          child: Row(
-            children: [
-              Expanded(
-                child: MetricHighlightCard(
-                  label: 'عقود نشطة',
-                  value: '${stats.activeContracts}',
-                  icon: Icons.description_rounded,
-                  color: colorScheme.primary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: MetricHighlightCard(
-                  label: 'المحصّل (سنة)',
-                  value: formatIraqiCurrency(stats.collectedThisYear),
-                  subtitle: 'د.ع',
-                  icon: Icons.payments_rounded,
-                  color: const Color(0xFFD5A069),
-                ),
-              ),
-            ],
-          ),
+        ResponsiveMetricRow(
+          children: [
+            MetricHighlightCard(
+              label: 'عقود نشطة',
+              value: '${stats.activeContracts}',
+              icon: Icons.description_rounded,
+              color: colorScheme.primary,
+            ),
+            MetricHighlightCard(
+              label: 'المحصّل (سنة)',
+              value: formatIraqiCurrency(stats.collectedThisYear),
+              subtitle: 'د.ع',
+              icon: Icons.payments_rounded,
+              color: const Color(0xFFD5A069),
+            ),
+          ],
         ),
         const SizedBox(height: 16),
         GpsGaugeChart(
@@ -267,14 +257,24 @@ class _ContractsBody extends StatelessWidget {
           centerLabel: 'إشغال',
         ),
         const SizedBox(height: 16),
-        StatTile(
-          label: 'المتوقع (سنة)',
-          value: '${formatIraqiCurrency(stats.expectedThisYear)} د.ع',
-        ),
-        const SizedBox(height: 10),
-        StatTile(
-          label: 'إجمالي المتأخرات',
-          value: '${formatIraqiCurrency(stats.totalOverdueAmount)} د.ع',
+        ResponsiveStatGrid(
+          children: [
+            StatTile(
+              label: 'المتوقع (سنة)',
+              value: '${formatIraqiCurrency(stats.expectedThisYear)} د.ع',
+              icon: Icons.event_available_rounded,
+            ),
+            StatTile(
+              label: 'إجمالي المتأخرات',
+              value: '${formatIraqiCurrency(stats.totalOverdueAmount)} د.ع',
+              icon: Icons.warning_amber_rounded,
+            ),
+            StatTile(
+              label: 'تنتهي قريباً',
+              value: '${stats.expiringSoonContracts}',
+              icon: Icons.schedule_rounded,
+            ),
+          ],
         ),
         if (stats.overdueBuckets.isNotEmpty) ...[
           const SizedBox(height: 16),
@@ -299,31 +299,23 @@ class _RevenueBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          height: 120,
-          child: Row(
-            children: [
-              Expanded(
-                child: MetricHighlightCard(
-                  label: 'إجمالي الإيراد',
-                  value: formatIraqiCurrency(stats.totalGrossRevenue),
-                  subtitle: 'د.ع',
-                  icon: Icons.account_balance_wallet_rounded,
-                  color: colorScheme.primary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: MetricHighlightCard(
-                  label: 'المتأخرات',
-                  value: formatIraqiCurrency(stats.totalOverdueAmount),
-                  subtitle: 'د.ع',
-                  icon: Icons.warning_amber_rounded,
-                  color: colorScheme.error,
-                ),
-              ),
-            ],
-          ),
+        ResponsiveMetricRow(
+          children: [
+            MetricHighlightCard(
+              label: 'إجمالي الإيراد',
+              value: formatIraqiCurrency(stats.totalGrossRevenue),
+              subtitle: 'د.ع',
+              icon: Icons.account_balance_wallet_rounded,
+              color: colorScheme.primary,
+            ),
+            MetricHighlightCard(
+              label: 'المتأخرات',
+              value: formatIraqiCurrency(stats.totalOverdueAmount),
+              subtitle: 'د.ع',
+              icon: Icons.warning_amber_rounded,
+              color: colorScheme.error,
+            ),
+          ],
         ),
         const SizedBox(height: 16),
         GpsGaugeChart(
@@ -365,30 +357,22 @@ class _TenantsBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          height: 120,
-          child: Row(
-            children: [
-              Expanded(
-                child: MetricHighlightCard(
-                  label: 'إجمالي المستأجرين',
-                  value: '${stats.totalTenants}',
-                  icon: Icons.people_rounded,
-                  color: colorScheme.primary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: MetricHighlightCard(
-                  label: 'رصيد مستحق',
-                  value: formatIraqiCurrency(stats.totalOutstandingBalance),
-                  subtitle: 'د.ع',
-                  icon: Icons.receipt_long_rounded,
-                  color: const Color(0xFFD5A069),
-                ),
-              ),
-            ],
-          ),
+        ResponsiveMetricRow(
+          children: [
+            MetricHighlightCard(
+              label: 'إجمالي المستأجرين',
+              value: '${stats.totalTenants}',
+              icon: Icons.people_rounded,
+              color: colorScheme.primary,
+            ),
+            MetricHighlightCard(
+              label: 'رصيد مستحق',
+              value: formatIraqiCurrency(stats.totalOutstandingBalance),
+              subtitle: 'د.ع',
+              icon: Icons.receipt_long_rounded,
+              color: const Color(0xFFD5A069),
+            ),
+          ],
         ),
         const SizedBox(height: 16),
         GpsGaugeChart(
@@ -398,9 +382,20 @@ class _TenantsBody extends StatelessWidget {
           centerLabel: 'نشط',
         ),
         const SizedBox(height: 16),
-        StatTile(label: 'نشطون', value: '${stats.activeTenants}'),
-        const SizedBox(height: 10),
-        StatTile(label: 'متأخرات', value: '${stats.withOverduePayments}'),
+        ResponsiveStatGrid(
+          children: [
+            StatTile(
+              label: 'نشطون',
+              value: '${stats.activeTenants}',
+              icon: Icons.verified_user_rounded,
+            ),
+            StatTile(
+              label: 'متأخرات',
+              value: '${stats.withOverduePayments}',
+              icon: Icons.pending_actions_rounded,
+            ),
+          ],
+        ),
       ],
     );
   }

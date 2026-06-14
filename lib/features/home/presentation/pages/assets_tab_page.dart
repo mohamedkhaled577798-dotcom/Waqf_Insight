@@ -10,6 +10,7 @@ import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_sect
 import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_section_event.dart';
 import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_section_state.dart';
 import 'package:waqf_insight/features/dashboard/presentation/widgets/dashboard_charts.dart';
+import 'package:waqf_insight/features/dashboard/presentation/widgets/responsive_dashboard_widgets.dart';
 import 'package:waqf_insight/features/filters/presentation/bloc/filters_bloc.dart';
 import 'package:waqf_insight/features/filters/presentation/bloc/filters_state.dart';
 import 'package:waqf_insight/features/filters/domain/entities/geo_selection.dart';
@@ -140,59 +141,43 @@ class _AssetsTabContentState extends State<_AssetsTabContent> {
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                       children: [
-                        SizedBox(
-                          height: 130,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: MetricHighlightCard(
-                                  label: 'إجمالي الأملاك',
-                                  value: '${stats.totalProperties}',
-                                  icon: Icons.domain_rounded,
-                                  color: colorScheme.primary,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: MetricHighlightCard(
-                                  label: 'القيمة التقديرية',
-                                  value: formatIraqiCurrency(stats.totalEstimatedValue),
-                                  subtitle: 'د.ع',
-                                  icon: Icons.payments_rounded,
-                                  color: const Color(0xFFD5A069),
-                                ),
-                              ),
-                            ],
-                          ),
+                        ResponsiveMetricRow(
+                          children: [
+                            MetricHighlightCard(
+                              label: 'إجمالي الأملاك',
+                              value: '${stats.totalProperties}',
+                              icon: Icons.domain_rounded,
+                              color: colorScheme.primary,
+                            ),
+                            MetricHighlightCard(
+                              label: 'القيمة التقديرية',
+                              value: formatIraqiCurrency(stats.totalEstimatedValue),
+                              subtitle: 'د.ع',
+                              icon: Icons.payments_rounded,
+                              color: const Color(0xFFD5A069),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
-                        Row(
+                        ResponsiveStatGrid(
                           children: [
-                            Expanded(
-                              child: _MiniStat(
-                                label: 'مؤجرة',
-                                value: '${stats.rentedCount}',
-                                icon: Icons.key_rounded,
-                                color: colorScheme.tertiary,
-                              ),
+                            _MiniStat(
+                              label: 'مؤجرة',
+                              value: '${stats.rentedCount}',
+                              icon: Icons.key_rounded,
+                              color: colorScheme.tertiary,
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: _MiniStat(
-                                label: 'شاغرة',
-                                value: '${stats.vacantCount}',
-                                icon: Icons.meeting_room_outlined,
-                                color: Colors.orange,
-                              ),
+                            _MiniStat(
+                              label: 'شاغرة',
+                              value: '${stats.vacantCount}',
+                              icon: Icons.meeting_room_outlined,
+                              color: Colors.orange,
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: _MiniStat(
-                                label: 'متنازع',
-                                value: '${stats.disputedCount}',
-                                icon: Icons.gavel_rounded,
-                                color: colorScheme.error,
-                              ),
+                            _MiniStat(
+                              label: 'متنازع',
+                              value: '${stats.disputedCount}',
+                              icon: Icons.gavel_rounded,
+                              color: colorScheme.error,
                             ),
                           ],
                         ),

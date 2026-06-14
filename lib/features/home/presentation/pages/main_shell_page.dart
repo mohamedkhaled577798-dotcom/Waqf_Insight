@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waqf_insight/features/home/presentation/pages/assets_tab_page.dart';
+import 'package:waqf_insight/features/home/presentation/widgets/main_shell_scope.dart';
 import 'package:waqf_insight/features/staff/presentation/pages/staff_tab_page.dart';
 import 'package:waqf_insight/features/home/presentation/pages/home_tab_page.dart';
 import 'package:waqf_insight/features/profile/presentation/pages/profile_page.dart';
@@ -54,53 +55,56 @@ class _MainShellPageState extends State<MainShellPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      extendBody: true,
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: colorScheme.primary.withValues(alpha: 0.18),
-                blurRadius: 24,
-                offset: const Offset(0, 8),
-              ),
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(28),
-            child: NavigationBar(
-              selectedIndex: _currentIndex,
-              height: 68,
-              elevation: 0,
-              backgroundColor: colorScheme.surfaceContainerHighest,
-              indicatorColor: colorScheme.primary.withValues(alpha: 0.15),
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-              onDestinationSelected: (index) {
-                setState(() => _currentIndex = index);
-              },
-              destinations: [
-                for (final tab in _tabs)
-                  NavigationDestination(
-                    icon: Icon(tab.icon),
-                    selectedIcon: Icon(
-                      tab.activeIcon,
-                      color: colorScheme.primary,
-                    ),
-                    label: tab.label,
-                  ),
+    return MainShellScope(
+      selectTab: (index) => setState(() => _currentIndex = index),
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _pages,
+        ),
+        extendBody: true,
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.primary.withValues(alpha: 0.18),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
               ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: NavigationBar(
+                selectedIndex: _currentIndex,
+                height: 68,
+                elevation: 0,
+                backgroundColor: colorScheme.surfaceContainerHighest,
+                indicatorColor: colorScheme.primary.withValues(alpha: 0.15),
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                onDestinationSelected: (index) {
+                  setState(() => _currentIndex = index);
+                },
+                destinations: [
+                  for (final tab in _tabs)
+                    NavigationDestination(
+                      icon: Icon(tab.icon),
+                      selectedIcon: Icon(
+                        tab.activeIcon,
+                        color: colorScheme.primary,
+                      ),
+                      label: tab.label,
+                    ),
+                ],
+              ),
             ),
           ),
         ),
