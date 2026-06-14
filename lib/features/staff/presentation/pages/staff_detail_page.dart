@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:waqf_insight/core/constants/app_constants.dart';
 import 'package:waqf_insight/core/di/injection_container.dart';
 import 'package:waqf_insight/core/utils/contact_launcher.dart';
 import 'package:waqf_insight/features/staff/data/models/staff_models.dart';
@@ -136,7 +137,7 @@ class _StaffDetailPageState extends State<StaffDetailPage> {
                           onEmail: () => _contact(
                             () => ContactLauncher.openEmail(
                               display.email!,
-                              subject: 'Waqf Insight',
+                              subject: AppConstants.appName,
                             ),
                           ),
                           onCall: display.phone != null

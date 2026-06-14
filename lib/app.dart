@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:waqf_insight/core/constants/app_constants.dart';
 import 'package:waqf_insight/config/routes/app_router.dart';
 import 'package:waqf_insight/core/di/injection_container.dart';
 import 'package:waqf_insight/core/theme/app_theme.dart';
@@ -25,7 +26,7 @@ class App extends StatelessWidget {
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
           return MaterialApp(
-            title: 'Waqf Insight',
+            title: AppConstants.appName,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

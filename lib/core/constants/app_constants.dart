@@ -6,7 +6,7 @@ class AppConstants {
   AppConstants._();
 
   // ── App Info ──────────────────────────────────────────────
-  static const String appName = 'Waqf Insight';
+  static const String appName = 'رؤية الوقف';
   static const String appVersion = '1.0.0';
 
   // ── API ───────────────────────────────────────────────────
@@ -17,7 +17,7 @@ class AppConstants {
   /// Flutter Web → use HTTP in dev to avoid self-signed cert + CORS issues
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://localhost:44357',
+    defaultValue: 'http://185.23.154.238/SunniwaqfApi/',
   );
 
   static const String loginPath = '/api/chairman/auth/login';
