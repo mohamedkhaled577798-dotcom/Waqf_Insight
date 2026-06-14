@@ -9,6 +9,7 @@ import 'package:waqf_insight/features/dashboard/domain/entities/dashboard_sectio
 import 'package:waqf_insight/features/filters/domain/entities/geo_selection.dart';
 import 'package:waqf_insight/features/filters/presentation/bloc/filters_bloc.dart';
 import 'package:waqf_insight/features/filters/presentation/bloc/filters_state.dart';
+import 'package:waqf_insight/features/activity/presentation/widgets/activity_log_access_card.dart';
 import 'package:waqf_insight/features/home/presentation/widgets/main_shell_scope.dart';
 import 'package:waqf_insight/features/splash/presentation/widgets/splash_colors.dart';
 
@@ -253,6 +254,8 @@ class HomeDashboardLayout extends StatelessWidget {
           sections: sections,
           onOpen: (section) => _openSection(context, section),
         ),
+        const SizedBox(height: 22),
+        const ActivityLogAccessCard(),
       ],
     );
   }
@@ -382,13 +385,13 @@ class _HomeHeroBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 92,
-                  height: 92,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
                     border: Border.all(
-                      color: SplashColors.gold.withValues(alpha: 0.75),
+                      color: SplashColors.gold.withValues(alpha: 0.85),
                       width: 2.5,
                     ),
                     boxShadow: [
@@ -400,17 +403,17 @@ class _HomeHeroBanner extends StatelessWidget {
                     ],
                   ),
                   child: ClipOval(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        fit: BoxFit.contain,
-                        filterQuality: FilterQuality.high,
-                        errorBuilder: (_, __, ___) => const Icon(
-                          Icons.account_balance_rounded,
-                          size: 38,
-                          color: SplashColors.deepGreen,
-                        ),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                      filterQuality: FilterQuality.high,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.account_balance_rounded,
+                        size: 42,
+                        color: SplashColors.deepGreen,
                       ),
                     ),
                   ),

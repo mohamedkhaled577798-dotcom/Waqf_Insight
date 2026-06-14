@@ -5,6 +5,7 @@ import 'package:waqf_insight/features/dashboard/presentation/pages/dashboard_sec
 import 'package:waqf_insight/features/dashboard/presentation/pages/geo_distribution_map_page.dart';
 import 'package:waqf_insight/features/dashboard/presentation/pages/property_detail_page.dart';
 import 'package:waqf_insight/features/dashboard/presentation/pages/property_search_page.dart';
+import 'package:waqf_insight/features/activity/presentation/pages/recent_activity_page.dart';
 import 'package:waqf_insight/features/staff/domain/entities/staff_detail_args.dart';
 import 'package:waqf_insight/features/staff/presentation/pages/staff_detail_page.dart';
 import 'package:waqf_insight/features/home/presentation/pages/main_shell_page.dart';
@@ -23,6 +24,7 @@ class AppRouter {
   static const String propertyDetail = '/property-detail';
   static const String propertySearch = '/property-search';
   static const String staffDetail = '/staff-detail';
+  static const String recentActivity = '/recent-activity';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -53,6 +55,9 @@ class AppRouter {
       case staffDetail:
         final args = settings.arguments! as StaffDetailArgs;
         return _buildRoute(StaffDetailPage(args: args), settings);
+
+      case recentActivity:
+        return _buildRoute(const RecentActivityPage(), settings);
 
       case waqfDetails:
         return _buildRoute(

@@ -65,6 +65,8 @@ class AppConstants {
       '/api/chairman/properties/map-focus';
   static String propertyDetailPath(String id) => '/api/chairman/properties/$id';
 
+  static const String activityRecentPath = '/api/chairman/activity/recent';
+
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
 

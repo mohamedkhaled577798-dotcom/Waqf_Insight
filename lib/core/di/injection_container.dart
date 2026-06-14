@@ -33,6 +33,10 @@ import 'package:waqf_insight/features/staff/data/datasources/staff_remote_data_s
 import 'package:waqf_insight/features/staff/data/repositories/staff_repository_impl.dart';
 import 'package:waqf_insight/features/staff/domain/repositories/staff_repository.dart';
 import 'package:waqf_insight/features/staff/presentation/bloc/staff_list_bloc.dart';
+import 'package:waqf_insight/features/activity/data/datasources/activity_remote_data_source.dart';
+import 'package:waqf_insight/features/activity/data/repositories/activity_repository_impl.dart';
+import 'package:waqf_insight/features/activity/domain/repositories/activity_repository.dart';
+import 'package:waqf_insight/features/activity/presentation/bloc/activity_bloc.dart';
 
 /// Global service locator instance.
 final sl = GetIt.instance;
@@ -60,6 +64,7 @@ Future<void> initDependencies() async {
   _initFiltersFeature();
   _initDashboardFeature();
   _initStaffFeature();
+  _initActivityFeature();
 }
 
 void _initDashboardFeature() {
@@ -93,6 +98,21 @@ void _initStaffFeature() {
   );
 
   sl.registerFactory(() => StaffListBloc(repository: sl()));
+}
+
+void _initActivityFeature() {
+  sl.registerLazySingleton<ActivityRemoteDataSource>(
+    () => ActivityRemoteDataSourceImpl(apiClient: sl()),
+  );
+
+  sl.registerLazySingleton<ActivityRepository>(
+    () => ActivityRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  sl.registerFactory(() => ActivityBloc(repository: sl()));
 }
 
 void _initFiltersFeature() {
