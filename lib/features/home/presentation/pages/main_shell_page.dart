@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waqf_insight/features/home/presentation/pages/assets_tab_page.dart';
+import 'package:waqf_insight/features/staff/presentation/pages/staff_tab_page.dart';
 import 'package:waqf_insight/features/home/presentation/pages/home_tab_page.dart';
 import 'package:waqf_insight/features/profile/presentation/pages/profile_page.dart';
 
@@ -25,6 +26,11 @@ class _MainShellPageState extends State<MainShellPage> {
       label: 'الأملاك',
     ),
     _NavTab(
+      icon: Icons.groups_outlined,
+      activeIcon: Icons.groups_rounded,
+      label: 'الموظفون',
+    ),
+    _NavTab(
       icon: Icons.person_outline_rounded,
       activeIcon: Icons.person_rounded,
       label: 'حسابي',
@@ -39,6 +45,7 @@ class _MainShellPageState extends State<MainShellPage> {
     _pages = const [
       HomeTabPage(),
       AssetsTabPage(),
+      StaffTabPage(),
       ProfilePage(),
     ];
   }

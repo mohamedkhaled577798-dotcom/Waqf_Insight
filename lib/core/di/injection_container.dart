@@ -29,6 +29,10 @@ import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_bloc
 import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_section_bloc.dart';
 import 'package:waqf_insight/features/dashboard/presentation/bloc/geo_map_bloc.dart';
 import 'package:waqf_insight/features/dashboard/presentation/bloc/property_list_bloc.dart';
+import 'package:waqf_insight/features/staff/data/datasources/staff_remote_data_source.dart';
+import 'package:waqf_insight/features/staff/data/repositories/staff_repository_impl.dart';
+import 'package:waqf_insight/features/staff/domain/repositories/staff_repository.dart';
+import 'package:waqf_insight/features/staff/presentation/bloc/staff_list_bloc.dart';
 
 /// Global service locator instance.
 final sl = GetIt.instance;
@@ -55,6 +59,7 @@ Future<void> initDependencies() async {
   _initAuthFeature();
   _initFiltersFeature();
   _initDashboardFeature();
+  _initStaffFeature();
 }
 
 void _initDashboardFeature() {
@@ -73,6 +78,21 @@ void _initDashboardFeature() {
   sl.registerFactory(() => DashboardSectionBloc(repository: sl()));
   sl.registerFactory(() => GeoMapBloc(repository: sl()));
   sl.registerFactory(() => PropertyListBloc(repository: sl()));
+}
+
+void _initStaffFeature() {
+  sl.registerLazySingleton<StaffRemoteDataSource>(
+    () => StaffRemoteDataSourceImpl(apiClient: sl()),
+  );
+
+  sl.registerLazySingleton<StaffRepository>(
+    () => StaffRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  sl.registerFactory(() => StaffListBloc(repository: sl()));
 }
 
 void _initFiltersFeature() {

@@ -55,6 +55,9 @@ class AppConstants {
   static const String dashboardStaffOverviewPath =
       '/api/chairman/dashboard/staff-overview';
 
+  static const String staffListPath = '/api/chairman/staff';
+  static String staffDetailPath(String userId) => '/api/chairman/staff/$userId';
+
   static const String propertiesDistributionPath =
       '/api/chairman/properties/distribution';
   static const String propertiesListPath = '/api/chairman/properties';

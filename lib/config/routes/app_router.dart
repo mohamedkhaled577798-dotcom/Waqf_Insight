@@ -5,6 +5,8 @@ import 'package:waqf_insight/features/dashboard/presentation/pages/dashboard_sec
 import 'package:waqf_insight/features/dashboard/presentation/pages/geo_distribution_map_page.dart';
 import 'package:waqf_insight/features/dashboard/presentation/pages/property_detail_page.dart';
 import 'package:waqf_insight/features/dashboard/presentation/pages/property_search_page.dart';
+import 'package:waqf_insight/features/staff/domain/entities/staff_detail_args.dart';
+import 'package:waqf_insight/features/staff/presentation/pages/staff_detail_page.dart';
 import 'package:waqf_insight/features/home/presentation/pages/main_shell_page.dart';
 import 'package:waqf_insight/features/splash/presentation/pages/splash_page.dart';
 
@@ -20,6 +22,7 @@ class AppRouter {
   static const String geoMap = '/geo-map';
   static const String propertyDetail = '/property-detail';
   static const String propertySearch = '/property-search';
+  static const String staffDetail = '/staff-detail';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -46,6 +49,10 @@ class AppRouter {
 
       case propertySearch:
         return _buildRoute(const PropertySearchPage(), settings);
+
+      case staffDetail:
+        final args = settings.arguments! as StaffDetailArgs;
+        return _buildRoute(StaffDetailPage(args: args), settings);
 
       case waqfDetails:
         return _buildRoute(
