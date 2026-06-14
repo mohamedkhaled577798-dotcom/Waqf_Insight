@@ -19,9 +19,9 @@ class UserModel extends UserEntity {
     DateTime? expiration,
   }) {
     return UserModel(
-      id: json['userId'] as String,
+      id: (json['userId'] ?? json['id']) as String,
       email: json['email'] as String,
-      name: json['fullName'] as String,
+      name: (json['fullName'] ?? json['name']) as String,
       phone: json['phone'] as String?,
       jobTitle: json['jobTitle'] as String?,
       department: json['department'] as String?,

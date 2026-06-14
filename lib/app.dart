@@ -5,6 +5,8 @@ import 'package:waqf_insight/core/di/injection_container.dart';
 import 'package:waqf_insight/core/theme/app_theme.dart';
 import 'package:waqf_insight/core/theme/theme_cubit.dart';
 import 'package:waqf_insight/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:waqf_insight/features/filters/presentation/bloc/filters_bloc.dart';
+import 'package:waqf_insight/features/filters/presentation/bloc/filters_event.dart';
 
 /// Root widget of the application.
 class App extends StatelessWidget {
@@ -16,6 +18,9 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
         BlocProvider<ThemeCubit>(create: (_) => sl<ThemeCubit>()),
+        BlocProvider<FiltersBloc>(
+          create: (_) => sl<FiltersBloc>()..add(const FiltersInitialized()),
+        ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {

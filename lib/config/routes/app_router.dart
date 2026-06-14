@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:waqf_insight/features/auth/presentation/pages/login_page.dart';
+import 'package:waqf_insight/features/dashboard/domain/entities/dashboard_section.dart';
+import 'package:waqf_insight/features/dashboard/presentation/pages/dashboard_section_page.dart';
+import 'package:waqf_insight/features/dashboard/presentation/pages/geo_distribution_map_page.dart';
+import 'package:waqf_insight/features/dashboard/presentation/pages/property_detail_page.dart';
+import 'package:waqf_insight/features/dashboard/presentation/pages/property_search_page.dart';
 import 'package:waqf_insight/features/home/presentation/pages/main_shell_page.dart';
 import 'package:waqf_insight/features/splash/presentation/pages/splash_page.dart';
 
@@ -11,6 +16,10 @@ class AppRouter {
   static const String auth = '/auth';
   static const String home = '/home';
   static const String waqfDetails = '/waqf-details';
+  static const String dashboardSection = '/dashboard-section';
+  static const String geoMap = '/geo-map';
+  static const String propertyDetail = '/property-detail';
+  static const String propertySearch = '/property-search';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -22,6 +31,21 @@ class AppRouter {
 
       case home:
         return _buildRoute(const MainShellPage(), settings);
+
+      case dashboardSection:
+        final args = settings.arguments! as DashboardSectionArgs;
+        return _buildRoute(DashboardSectionPage(args: args), settings);
+
+      case geoMap:
+        final args = settings.arguments as GeoMapArgs? ?? const GeoMapArgs();
+        return _buildRoute(GeoDistributionMapPage(args: args), settings);
+
+      case propertyDetail:
+        final args = settings.arguments! as PropertyDetailArgs;
+        return _buildRoute(PropertyDetailPage(args: args), settings);
+
+      case propertySearch:
+        return _buildRoute(const PropertySearchPage(), settings);
 
       case waqfDetails:
         return _buildRoute(

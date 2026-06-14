@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:waqf_insight/features/home/presentation/pages/assets_tab_page.dart';
 import 'package:waqf_insight/features/home/presentation/pages/home_tab_page.dart';
 import 'package:waqf_insight/features/profile/presentation/pages/profile_page.dart';
-import 'package:waqf_insight/features/home/presentation/pages/waqf_tab_page.dart';
 
 class MainShellPage extends StatefulWidget {
   const MainShellPage({super.key});
@@ -20,9 +20,9 @@ class _MainShellPageState extends State<MainShellPage> {
       label: 'الرئيسية',
     ),
     _NavTab(
-      icon: Icons.account_balance_rounded,
-      activeIcon: Icons.account_balance_rounded,
-      label: 'الأوقاف',
+      icon: Icons.domain_rounded,
+      activeIcon: Icons.domain_rounded,
+      label: 'الأملاك',
     ),
     _NavTab(
       icon: Icons.person_outline_rounded,
@@ -38,7 +38,7 @@ class _MainShellPageState extends State<MainShellPage> {
     super.initState();
     _pages = const [
       HomeTabPage(),
-      WaqfTabPage(),
+      AssetsTabPage(),
       ProfilePage(),
     ];
   }

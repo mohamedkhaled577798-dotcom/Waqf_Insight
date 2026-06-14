@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:flutter/foundation.dart';
 import 'package:waqf_insight/core/constants/app_constants.dart';
 import 'package:waqf_insight/core/errors/exceptions.dart';
 import 'package:waqf_insight/core/network/auth_token_holder.dart';
@@ -20,6 +24,20 @@ class ApiClient {
         },
       ),
     );
+
+    if (!kIsWeb) {
+      final adapter = IOHttpClientAdapter();
+      adapter.createHttpClient = () {
+        final client = HttpClient();
+        client.badCertificateCallback = (cert, host, port) {
+          return host == 'localhost'
+              || host == '127.0.0.1'
+              || host == '10.0.2.2';
+        };
+        return client;
+      };
+      _dio.httpClientAdapter = adapter;
+    }
 
     _dio.interceptors.addAll([
       _AuthInterceptor(_tokenHolder),

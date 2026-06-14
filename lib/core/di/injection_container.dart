@@ -17,6 +17,18 @@ import 'package:waqf_insight/features/auth/domain/usecases/login_usecase.dart';
 import 'package:waqf_insight/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:waqf_insight/features/auth/domain/usecases/register_usecase.dart';
 import 'package:waqf_insight/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:waqf_insight/features/filters/data/datasources/filters_remote_data_source.dart';
+import 'package:waqf_insight/features/filters/data/repositories/filters_repository_impl.dart';
+import 'package:waqf_insight/features/filters/domain/repositories/filters_repository.dart';
+import 'package:waqf_insight/features/filters/presentation/bloc/filters_bloc.dart';
+
+import 'package:waqf_insight/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
+import 'package:waqf_insight/features/dashboard/data/repositories/dashboard_repository_impl.dart';
+import 'package:waqf_insight/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_section_bloc.dart';
+import 'package:waqf_insight/features/dashboard/presentation/bloc/geo_map_bloc.dart';
+import 'package:waqf_insight/features/dashboard/presentation/bloc/property_list_bloc.dart';
 
 /// Global service locator instance.
 final sl = GetIt.instance;
@@ -41,6 +53,41 @@ Future<void> initDependencies() async {
 
   // ── Features ────────────────────────────────────────────
   _initAuthFeature();
+  _initFiltersFeature();
+  _initDashboardFeature();
+}
+
+void _initDashboardFeature() {
+  sl.registerLazySingleton<DashboardRemoteDataSource>(
+    () => DashboardRemoteDataSourceImpl(apiClient: sl()),
+  );
+
+  sl.registerLazySingleton<DashboardRepository>(
+    () => DashboardRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  sl.registerFactory(() => DashboardBloc(repository: sl()));
+  sl.registerFactory(() => DashboardSectionBloc(repository: sl()));
+  sl.registerFactory(() => GeoMapBloc(repository: sl()));
+  sl.registerFactory(() => PropertyListBloc(repository: sl()));
+}
+
+void _initFiltersFeature() {
+  sl.registerLazySingleton<FiltersRemoteDataSource>(
+    () => FiltersRemoteDataSourceImpl(apiClient: sl()),
+  );
+
+  sl.registerLazySingleton<FiltersRepository>(
+    () => FiltersRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  sl.registerFactory(() => FiltersBloc(repository: sl()));
 }
 
 void _initAuthFeature() {
