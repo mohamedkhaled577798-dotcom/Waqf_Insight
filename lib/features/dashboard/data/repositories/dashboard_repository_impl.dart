@@ -4,6 +4,8 @@ import 'package:waqf_insight/core/errors/failures.dart';
 import 'package:waqf_insight/core/network/network_info.dart';
 import 'package:waqf_insight/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
 import 'package:waqf_insight/features/dashboard/data/models/dashboard_stats_models.dart';
+import 'package:waqf_insight/features/dashboard/data/models/executive_models.dart';
+import 'package:waqf_insight/features/dashboard/data/models/property_asset_models.dart';
 import 'package:waqf_insight/features/dashboard/data/models/property_map_models.dart';
 import 'package:waqf_insight/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:waqf_insight/features/filters/domain/entities/geo_selection.dart';
@@ -134,6 +136,69 @@ class DashboardRepositoryImpl implements DashboardRepository {
         search: search,
         page: page,
         pageSize: pageSize,
+      ),
+    );
+  }
+
+  @override
+  Future<Either<Failure, DashboardResult<PropertyAssetRegistryModel>>> getPropertyAssetRegistry({
+    required GeoSelection selection,
+    String? search,
+    String linkStatus = 'all',
+    String? aqarId,
+    required int page,
+    required int pageSize,
+  }) {
+    return _guard(
+      () => remoteDataSource.getPropertyAssetRegistry(
+        selection: selection,
+        search: search,
+        linkStatus: linkStatus,
+        aqarId: aqarId,
+        page: page,
+        pageSize: pageSize,
+      ),
+    );
+  }
+
+  @override
+  Future<Either<Failure, DashboardResult<PropertyAssetDetailModel>>> getPropertyAssetDetail(
+    String id,
+  ) {
+    return _guard(() => remoteDataSource.getPropertyAssetDetail(id));
+  }
+
+  @override
+  Future<Either<Failure, DashboardResult<List<PropertyAssetListItemModel>>>>
+      getPropertyAssetsForProperty(String propertyId) {
+    return _guard(() => remoteDataSource.getPropertyAssetsForProperty(propertyId));
+  }
+
+  @override
+  Future<Either<Failure, DashboardResult<ExecutiveOverviewModel>>> getExecutiveOverview(
+    GeoSelection selection,
+  ) {
+    return _guard(() => remoteDataSource.getExecutiveOverview(selection));
+  }
+
+  @override
+  Future<Either<Failure, DashboardResult<ChairmanAlertsModel>>> getExecutiveAlerts(
+    GeoSelection selection,
+  ) {
+    return _guard(() => remoteDataSource.getExecutiveAlerts(selection));
+  }
+
+  @override
+  Future<Either<Failure, DashboardResult<ChairmanCalendarModel>>> getExecutiveCalendar({
+    required GeoSelection selection,
+    required int year,
+    required int month,
+  }) {
+    return _guard(
+      () => remoteDataSource.getExecutiveCalendar(
+        selection: selection,
+        year: year,
+        month: month,
       ),
     );
   }

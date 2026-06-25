@@ -61,11 +61,20 @@ class AppConstants {
   static const String propertiesDistributionPath =
       '/api/chairman/properties/distribution';
   static const String propertiesListPath = '/api/chairman/properties';
+  static const String propertyAssetsListPath = '/api/chairman/property-assets';
+  static String propertyAssetDetailPath(String id) => '/api/chairman/property-assets/$id';
+  static String propertyAssetsForPropertyPath(String propertyId) =>
+      '/api/chairman/properties/$propertyId/assets';
   static const String propertiesMapFocusPath =
       '/api/chairman/properties/map-focus';
   static String propertyDetailPath(String id) => '/api/chairman/properties/$id';
 
   static const String activityRecentPath = '/api/chairman/activity/recent';
+
+  static const String executiveOverviewPath = '/api/chairman/executive/overview';
+  static const String executiveAlertsPath = '/api/chairman/executive/alerts';
+  static const String executiveTrendsPath = '/api/chairman/executive/trends';
+  static const String executiveCalendarPath = '/api/chairman/executive/calendar';
 
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);

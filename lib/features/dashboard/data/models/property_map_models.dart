@@ -236,6 +236,7 @@ class PropertyDetailModel {
     this.usageStatus,
     this.estimatedValue,
     this.landArea,
+    required this.assetCount,
     required this.hasDeed,
     required this.hasGps,
   });
@@ -255,6 +256,7 @@ class PropertyDetailModel {
   final String? usageStatus;
   final double? estimatedValue;
   final double? landArea;
+  final int assetCount;
   final bool hasDeed;
   final bool hasGps;
 
@@ -277,6 +279,7 @@ class PropertyDetailModel {
           ? parseJsonDouble(json['estimatedValue'])
           : null,
       landArea: json['landArea'] != null ? parseJsonDouble(json['landArea']) : null,
+      assetCount: parseJsonInt(json['assetCount']),
       hasDeed: json['hasDeed'] as bool? ?? false,
       hasGps: json['hasGps'] as bool? ?? false,
     );

@@ -100,7 +100,7 @@ class _PropertyOsmMapState extends State<PropertyOsmMap> {
           children: [
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.example.waqf_insight',
+              userAgentPackageName: 'com.insight.waqf',
             ),
             if (circles.isNotEmpty) CircleLayer(circles: circles),
             MarkerLayer(markers: markers),
@@ -321,7 +321,7 @@ class PropertyOsmMiniMap extends StatelessWidget {
           children: [
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.example.waqf_insight',
+              userAgentPackageName: 'com.insight.waqf',
             ),
             MarkerLayer(
               markers: [

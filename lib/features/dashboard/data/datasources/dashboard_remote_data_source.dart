@@ -3,6 +3,8 @@ import 'package:waqf_insight/core/errors/exceptions.dart';
 import 'package:waqf_insight/core/network/api_client.dart';
 import 'package:waqf_insight/features/dashboard/data/models/dashboard_stats_models.dart';
 import 'package:waqf_insight/features/filters/data/models/chairman_filter_response.dart';
+import 'package:waqf_insight/features/dashboard/data/models/executive_models.dart';
+import 'package:waqf_insight/features/dashboard/data/models/property_asset_models.dart';
 import 'package:waqf_insight/features/dashboard/data/models/property_map_models.dart';
 import 'package:waqf_insight/features/filters/domain/entities/geo_selection.dart';
 
@@ -27,6 +29,31 @@ abstract class DashboardRemoteDataSource {
     String? search,
     required int page,
     required int pageSize,
+  });
+
+  Future<DashboardResult<PropertyAssetRegistryModel>> getPropertyAssetRegistry({
+    required GeoSelection selection,
+    String? search,
+    String linkStatus = 'all',
+    String? aqarId,
+    required int page,
+    required int pageSize,
+  });
+
+  Future<DashboardResult<PropertyAssetDetailModel>> getPropertyAssetDetail(String id);
+
+  Future<DashboardResult<List<PropertyAssetListItemModel>>> getPropertyAssetsForProperty(
+    String propertyId,
+  );
+
+  Future<DashboardResult<ExecutiveOverviewModel>> getExecutiveOverview(GeoSelection selection);
+
+  Future<DashboardResult<ChairmanAlertsModel>> getExecutiveAlerts(GeoSelection selection);
+
+  Future<DashboardResult<ChairmanCalendarModel>> getExecutiveCalendar({
+    required GeoSelection selection,
+    required int year,
+    required int month,
   });
 }
 
@@ -222,6 +249,101 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     return _unwrap(
       response.data,
       (data) => PagedPropertyListModel.fromJson(data as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<DashboardResult<PropertyAssetRegistryModel>> getPropertyAssetRegistry({
+    required GeoSelection selection,
+    String? search,
+    String linkStatus = 'all',
+    String? aqarId,
+    required int page,
+    required int pageSize,
+  }) async {
+    final params = {
+      ...selection.toQueryParams(),
+      'page': '$page',
+      'pageSize': '$pageSize',
+      'linkStatus': linkStatus,
+      if (search != null && search.trim().isNotEmpty) 'search': search.trim(),
+      if (aqarId != null && aqarId.trim().isNotEmpty) 'aqarId': aqarId.trim(),
+    };
+    final response = await apiClient.get(
+      AppConstants.propertyAssetsListPath,
+      queryParameters: params,
+    );
+    return _unwrap(
+      response.data,
+      (data) => PropertyAssetRegistryModel.fromJson(data as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<DashboardResult<PropertyAssetDetailModel>> getPropertyAssetDetail(String id) async {
+    final response = await apiClient.get(AppConstants.propertyAssetDetailPath(id));
+    return _unwrap(
+      response.data,
+      (data) => PropertyAssetDetailModel.fromJson(data as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<DashboardResult<List<PropertyAssetListItemModel>>> getPropertyAssetsForProperty(
+    String propertyId,
+  ) async {
+    final response = await apiClient.get(AppConstants.propertyAssetsForPropertyPath(propertyId));
+    return _unwrap(
+      response.data,
+      (data) {
+        if (data is! List) return <PropertyAssetListItemModel>[];
+        return data
+            .map((e) => PropertyAssetListItemModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      },
+    );
+  }
+
+  @override
+  Future<DashboardResult<ExecutiveOverviewModel>> getExecutiveOverview(
+    GeoSelection selection,
+  ) {
+    return _get(
+      AppConstants.executiveOverviewPath,
+      selection,
+      (data) => ExecutiveOverviewModel.fromJson(data as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<DashboardResult<ChairmanAlertsModel>> getExecutiveAlerts(
+    GeoSelection selection,
+  ) {
+    return _get(
+      AppConstants.executiveAlertsPath,
+      selection,
+      (data) => ChairmanAlertsModel.fromJson(data as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<DashboardResult<ChairmanCalendarModel>> getExecutiveCalendar({
+    required GeoSelection selection,
+    required int year,
+    required int month,
+  }) async {
+    final params = {
+      ...selection.toQueryParams(),
+      'year': '$year',
+      'month': '$month',
+    };
+    final response = await apiClient.get(
+      AppConstants.executiveCalendarPath,
+      queryParameters: params,
+    );
+    return _unwrap(
+      response.data,
+      (data) => ChairmanCalendarModel.fromJson(data as Map<String, dynamic>),
     );
   }
 }

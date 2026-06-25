@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:waqf_insight/features/auth/presentation/pages/login_page.dart';
+import 'package:waqf_insight/features/dashboard/data/models/property_asset_models.dart';
 import 'package:waqf_insight/features/dashboard/domain/entities/dashboard_section.dart';
 import 'package:waqf_insight/features/dashboard/presentation/pages/dashboard_section_page.dart';
 import 'package:waqf_insight/features/dashboard/presentation/pages/geo_distribution_map_page.dart';
+import 'package:waqf_insight/features/dashboard/presentation/pages/chairman_alerts_page.dart';
+import 'package:waqf_insight/features/dashboard/presentation/pages/executive_calendar_page.dart';
+import 'package:waqf_insight/features/dashboard/presentation/pages/property_asset_detail_page.dart';
+import 'package:waqf_insight/features/dashboard/presentation/pages/property_asset_search_page.dart';
 import 'package:waqf_insight/features/dashboard/presentation/pages/property_detail_page.dart';
 import 'package:waqf_insight/features/dashboard/presentation/pages/property_search_page.dart';
 import 'package:waqf_insight/features/activity/presentation/pages/recent_activity_page.dart';
@@ -23,6 +28,10 @@ class AppRouter {
   static const String geoMap = '/geo-map';
   static const String propertyDetail = '/property-detail';
   static const String propertySearch = '/property-search';
+  static const String propertyAssetSearch = '/property-asset-search';
+  static const String propertyAssetDetail = '/property-asset-detail';
+  static const String chairmanAlerts = '/chairman-alerts';
+  static const String executiveCalendar = '/executive-calendar';
   static const String staffDetail = '/staff-detail';
   static const String recentActivity = '/recent-activity';
 
@@ -51,6 +60,19 @@ class AppRouter {
 
       case propertySearch:
         return _buildRoute(const PropertySearchPage(), settings);
+
+      case propertyAssetSearch:
+        return _buildRoute(const PropertyAssetSearchPage(), settings);
+
+      case propertyAssetDetail:
+        final assetArgs = settings.arguments! as PropertyAssetDetailArgs;
+        return _buildRoute(PropertyAssetDetailPage(args: assetArgs), settings);
+
+      case chairmanAlerts:
+        return _buildRoute(const ChairmanAlertsPage(), settings);
+
+      case executiveCalendar:
+        return _buildRoute(const ExecutiveCalendarPage(), settings);
 
       case staffDetail:
         final args = settings.arguments! as StaffDetailArgs;

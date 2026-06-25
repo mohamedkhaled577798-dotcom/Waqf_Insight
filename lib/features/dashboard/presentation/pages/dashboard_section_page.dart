@@ -181,11 +181,22 @@ class _PropertiesBody extends StatelessWidget {
         ResponsiveMetricRow(
           children: [
             MetricHighlightCard(
-              label: 'إجمالي الأملاك',
+              label: 'إجمالي العقارات',
               value: '${stats.totalProperties}',
               icon: Icons.domain_rounded,
               color: Theme.of(context).colorScheme.primary,
             ),
+            MetricHighlightCard(
+              label: 'الملوك (وحدات)',
+              value: '${stats.totalUnits}',
+              icon: Icons.apartment_rounded,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        ResponsiveMetricRow(
+          children: [
             MetricHighlightCard(
               label: 'القيمة التقديرية',
               value: formatIraqiCurrency(stats.totalEstimatedValue),
@@ -254,7 +265,7 @@ class _ContractsBody extends StatelessWidget {
         GpsGaugeChart(
           percent: stats.occupancyRatePercent,
           title: 'نسبة الإشغال',
-          subtitle: 'نسبة الأملاك المؤجرة',
+          subtitle: 'نسبة الملوك المؤجرة (${stats.rentedUnits}/${stats.totalUnits})',
           centerLabel: 'إشغال',
         ),
         const SizedBox(height: 16),

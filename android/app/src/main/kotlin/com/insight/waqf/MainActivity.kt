@@ -1,4 +1,4 @@
-package com.example.waqf_insight
+package com.insight.waqf
 
 import io.flutter.embedding.android.FlutterActivity
 

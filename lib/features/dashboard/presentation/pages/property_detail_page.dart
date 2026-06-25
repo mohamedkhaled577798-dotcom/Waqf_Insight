@@ -5,6 +5,7 @@ import 'package:waqf_insight/config/routes/app_router.dart';
 import 'package:waqf_insight/core/di/injection_container.dart';
 import 'package:waqf_insight/core/utils/format_helpers.dart';
 import 'package:waqf_insight/core/utils/map_launcher.dart';
+import 'package:waqf_insight/features/dashboard/data/models/property_asset_models.dart';
 import 'package:waqf_insight/features/dashboard/data/models/property_map_models.dart';
 import 'package:waqf_insight/features/dashboard/domain/entities/dashboard_section.dart';
 import 'package:waqf_insight/features/dashboard/domain/repositories/dashboard_repository.dart';
@@ -26,6 +27,8 @@ class PropertyDetailPage extends StatefulWidget {
 
 class _PropertyDetailPageState extends State<PropertyDetailPage> {
   PropertyDetailModel? _detail;
+  List<PropertyAssetListItemModel> _assets = const [];
+  bool _assetsLoading = false;
   String? _error;
   bool _loading = true;
 
@@ -52,9 +55,31 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
         _loading = false;
         _error = failure.message;
       }),
+      (response) {
+        setState(() {
+          _loading = false;
+          _detail = response.data;
+        });
+        _loadAssets(response.data.id);
+      },
+    );
+  }
+
+  Future<void> _loadAssets(String propertyId) async {
+    setState(() => _assetsLoading = true);
+
+    final result = await sl<DashboardRepository>().getPropertyAssetsForProperty(propertyId);
+
+    if (!mounted) return;
+
+    result.fold(
+      (_) => setState(() {
+        _assetsLoading = false;
+        _assets = const [];
+      }),
       (response) => setState(() {
-        _loading = false;
-        _detail = response.data;
+        _assetsLoading = false;
+        _assets = response.data;
       }),
     );
   }
@@ -77,7 +102,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('تفاصيل الملك', style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+        title: Text('تفاصيل العقار', style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -95,7 +120,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                   ),
                 )
               : _detail == null
-                  ? Center(child: Text('الملك غير موجود', style: GoogleFonts.cairo()))
+                  ? Center(child: Text('العقار غير موجود', style: GoogleFonts.cairo()))
                   : ListView(
                       padding: const EdgeInsets.all(20),
                       children: [
@@ -144,12 +169,19 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                               ),
                             if (_detail!.landArea != null)
                               _InfoRow(label: 'المساحة', value: '${_detail!.landArea}'),
+                            _InfoRow(label: 'عدد الملوك', value: '${_detail!.assetCount}'),
                             _InfoRow(label: 'سند', value: _detail!.hasDeed ? 'نعم' : 'لا'),
                             _InfoRow(
                               label: 'GPS',
                               value: _detail!.hasGps ? 'متوفّر' : 'غير متوفّر',
                             ),
                           ],
+                        ),
+                        const SizedBox(height: 12),
+                        _PropertyAssetsSection(
+                          assetCount: _detail!.assetCount,
+                          loading: _assetsLoading,
+                          assets: _assets,
                         ),
                         const SizedBox(height: 24),
                         if (_detail!.hasGps &&
@@ -325,6 +357,78 @@ class _InfoRow extends StatelessWidget {
             ),
           ),
           Expanded(child: Text(value, style: GoogleFonts.cairo())),
+        ],
+      ),
+    );
+  }
+}
+
+class _PropertyAssetsSection extends StatelessWidget {
+  const _PropertyAssetsSection({
+    required this.assetCount,
+    required this.loading,
+    required this.assets,
+  });
+
+  final int assetCount;
+  final bool loading;
+  final List<PropertyAssetListItemModel> assets;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'الملوك ($assetCount)',
+            style: GoogleFonts.cairo(fontWeight: FontWeight.w800, fontSize: 15),
+          ),
+          const SizedBox(height: 10),
+          if (loading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (assets.isEmpty)
+            Text(
+              'لا توجد ملوك مسجّلة لهذا العقار',
+              style: GoogleFonts.cairo(color: colorScheme.onSurface.withValues(alpha: 0.7)),
+            )
+          else
+            ...assets.map(
+              (item) => Card(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: ListTile(
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    AppRouter.propertyAssetDetail,
+                    arguments: PropertyAssetDetailArgs(
+                      assetId: item.id,
+                      title: item.assetCode,
+                    ),
+                  ),
+                  title: Text(item.assetCode, style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                  subtitle: Text(
+                    [
+                      if (item.commercialName != null && item.commercialName!.isNotEmpty)
+                        item.commercialName!,
+                      item.occupancyStatus,
+                      if (item.usageTypeName != null) item.usageTypeName!,
+                    ].join(' • '),
+                    style: GoogleFonts.cairo(fontSize: 12),
+                  ),
+                  trailing: const Icon(Icons.chevron_left),
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -28,6 +28,8 @@ import 'package:waqf_insight/features/dashboard/domain/repositories/dashboard_re
 import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:waqf_insight/features/dashboard/presentation/bloc/dashboard_section_bloc.dart';
 import 'package:waqf_insight/features/dashboard/presentation/bloc/geo_map_bloc.dart';
+import 'package:waqf_insight/features/dashboard/presentation/bloc/executive_bloc.dart';
+import 'package:waqf_insight/features/dashboard/presentation/bloc/property_asset_list_bloc.dart';
 import 'package:waqf_insight/features/dashboard/presentation/bloc/property_list_bloc.dart';
 import 'package:waqf_insight/features/staff/data/datasources/staff_remote_data_source.dart';
 import 'package:waqf_insight/features/staff/data/repositories/staff_repository_impl.dart';
@@ -83,6 +85,8 @@ void _initDashboardFeature() {
   sl.registerFactory(() => DashboardSectionBloc(repository: sl()));
   sl.registerFactory(() => GeoMapBloc(repository: sl()));
   sl.registerFactory(() => PropertyListBloc(repository: sl()));
+  sl.registerFactory(() => PropertyAssetListBloc(repository: sl()));
+  sl.registerFactory(() => ExecutiveBloc(repository: sl()));
 }
 
 void _initStaffFeature() {

@@ -123,6 +123,7 @@ List<DistributionSliceModel> _parseSlices(dynamic raw) {
 class PropertyStatsModel {
   const PropertyStatsModel({
     required this.totalProperties,
+    required this.totalUnits,
     required this.gpsCoveragePercent,
     required this.totalEstimatedValue,
     required this.rentedCount,
@@ -138,6 +139,7 @@ class PropertyStatsModel {
   });
 
   final int totalProperties;
+  final int totalUnits;
   final double gpsCoveragePercent;
   final double totalEstimatedValue;
   final int rentedCount;
@@ -154,6 +156,7 @@ class PropertyStatsModel {
   factory PropertyStatsModel.fromJson(Map<String, dynamic> json) {
     return PropertyStatsModel(
       totalProperties: parseJsonInt(json['totalProperties']),
+      totalUnits: parseJsonInt(json['totalUnits']),
       gpsCoveragePercent: parseJsonDouble(json['gpsCoveragePercent']),
       totalEstimatedValue: parseJsonDouble(json['totalEstimatedValue']),
       rentedCount: parseJsonInt(json['rentedCount']),
@@ -171,6 +174,7 @@ class PropertyStatsModel {
 
   factory PropertyStatsModel.empty() => const PropertyStatsModel(
         totalProperties: 0,
+        totalUnits: 0,
         gpsCoveragePercent: 0,
         totalEstimatedValue: 0,
         rentedCount: 0,
@@ -190,6 +194,8 @@ class ContractStatsModel {
   const ContractStatsModel({
     required this.collectedThisYear,
     required this.expectedThisYear,
+    required this.totalUnits,
+    required this.rentedUnits,
     required this.occupancyRatePercent,
     required this.activeContracts,
     required this.expiringSoonContracts,
@@ -199,6 +205,8 @@ class ContractStatsModel {
 
   final double collectedThisYear;
   final double expectedThisYear;
+  final int totalUnits;
+  final int rentedUnits;
   final double occupancyRatePercent;
   final int activeContracts;
   final int expiringSoonContracts;
@@ -210,6 +218,8 @@ class ContractStatsModel {
     return ContractStatsModel(
       collectedThisYear: parseJsonDouble(json['collectedThisYear']),
       expectedThisYear: parseJsonDouble(json['expectedThisYear']),
+      totalUnits: parseJsonInt(json['totalUnits']),
+      rentedUnits: parseJsonInt(json['rentedUnits']),
       occupancyRatePercent: parseJsonDouble(json['occupancyRatePercent']),
       activeContracts: parseJsonInt(json['activeContracts']),
       expiringSoonContracts: parseJsonInt(json['expiringSoonContracts']),
@@ -223,6 +233,8 @@ class ContractStatsModel {
   factory ContractStatsModel.empty() => const ContractStatsModel(
         collectedThisYear: 0,
         expectedThisYear: 0,
+        totalUnits: 0,
+        rentedUnits: 0,
         occupancyRatePercent: 0,
         activeContracts: 0,
         expiringSoonContracts: 0,

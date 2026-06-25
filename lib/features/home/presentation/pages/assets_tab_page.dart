@@ -77,9 +77,9 @@ class _AssetsTabContentState extends State<_AssetsTabContent> {
           ),
           actions: [
             IconButton(
-              tooltip: 'بحث الأملاك',
+              tooltip: 'سجل الملوك',
               icon: const Icon(Icons.search_rounded),
-              onPressed: () => Navigator.pushNamed(context, AppRouter.propertySearch),
+              onPressed: () => Navigator.pushNamed(context, AppRouter.propertyAssetSearch),
             ),
             IconButton(
               tooltip: 'الخريطة',
@@ -144,11 +144,22 @@ class _AssetsTabContentState extends State<_AssetsTabContent> {
                         ResponsiveMetricRow(
                           children: [
                             MetricHighlightCard(
-                              label: 'إجمالي الأملاك',
+                              label: 'إجمالي العقارات',
                               value: '${stats.totalProperties}',
                               icon: Icons.domain_rounded,
                               color: colorScheme.primary,
                             ),
+                            MetricHighlightCard(
+                              label: 'الملوك (وحدات)',
+                              value: '${stats.totalUnits}',
+                              icon: Icons.apartment_rounded,
+                              color: colorScheme.tertiary,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        ResponsiveMetricRow(
+                          children: [
                             MetricHighlightCard(
                               label: 'القيمة التقديرية',
                               value: formatIraqiCurrency(stats.totalEstimatedValue),
@@ -207,11 +218,23 @@ class _AssetsTabContentState extends State<_AssetsTabContent> {
                         OutlinedButton.icon(
                           onPressed: () => Navigator.pushNamed(
                             context,
+                            AppRouter.propertyAssetSearch,
+                          ),
+                          icon: const Icon(Icons.apartment_rounded),
+                          label: Text(
+                            'سجل الملوك (الوحدات الوقفية)',
+                            style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          onPressed: () => Navigator.pushNamed(
+                            context,
                             AppRouter.propertySearch,
                           ),
                           icon: const Icon(Icons.search_rounded),
                           label: Text(
-                            'بحث واستعراض الأملاك',
+                            'بحث العقارات',
                             style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
                           ),
                         ),
